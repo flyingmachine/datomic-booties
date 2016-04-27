@@ -29,3 +29,5 @@
    (conform conn (default-norm-map)))
   ([conn & args]
    (apply c/ensure-conforms conn args)))
+
+;; TODO list installed attributes

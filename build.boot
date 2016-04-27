@@ -75,10 +75,13 @@
 (deftask recreate-db []
   (comp (delete-db) (create-db) (migrate-db)))
 
-(deftask bootstrap []
+(deftask bootstrap-db []
   (comp (create-db)
         (migrate-db)))
 
+(deftask recreate-db []
+  (comp (delete-db)
+        (bootstrap-db)))
 
 (deftask run
   "Start hot-loading application"
