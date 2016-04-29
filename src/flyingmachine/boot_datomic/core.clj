@@ -1,4 +1,4 @@
-(ns stack.db.tasks
+(ns flyingmachine.boot-datomic.core
   (:require [datomic.api :as d]
             [io.rkn.conformity :as c]
             [com.flyingmachine.vern :as v]
@@ -18,6 +18,7 @@
     @entities))
 
 (defn default-norm-map
+  "Loads norm map from default sources"
   []
   (merge @default-schema
          (if @default-fixtures
@@ -30,4 +31,11 @@
   ([conn & args]
    (apply c/ensure-conforms conn args)))
 
-;; TODO list installed attributes
+(defn attributes
+  "list all installed attributes"
+  [conn]
+  (sort (d/q '[:find [?ident ...]
+               :where
+               [?e :db/ident ?ident]
+               [_ :db.install/attribute ?e]]
+             (d/db conn))))

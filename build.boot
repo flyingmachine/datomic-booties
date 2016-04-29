@@ -1,98 +1,42 @@
 (set-env!
- :source-paths #{"src/frontend" "src/backend"}
- :resource-paths #{"resources"}
- :dependencies '[[adzerk/boot-cljs      "1.7.228-1"       :scope "test"]
-                 [adzerk/boot-cljs-repl "0.1.10-SNAPSHOT" :scope "test"]
-                 [org.clojure/clojurescript "1.7.228"]
-                 [adzerk/boot-reload    "0.4.4"           :scope "test"]
-                 
-                 ;; server
-                 [environ                             "1.0.2"]
-                 [boot-environ                        "1.0.2"]
-                 [ring/ring-core                      "1.4.0"]
-                 [ring/ring-defaults                  "0.1.4"]
-                 [ring-middleware-format              "0.7.0"]
-                 [com.stuartsierra/component          "0.3.1"]
-                 [org.danielsz/system                 "0.2.0" :scope "test"]
-                 [liberator                           "0.14.1"]
-                 [http-kit                            "2.1.18"]
-                 [com.datomic/datomic-free            "0.9.5344"]
-                 [com.flyingmachine/liberator-unbound "0.1.1"]
-                 [com.flyingmachine/datomic-junk      "0.2.3"]
-                 [com.flyingmachine/vern              "0.1.0-SNAPSHOT"]
-                 [compojure                           "1.5.0"]
-                 [io.rkn/conformity                   "0.4.0"]
-                 [buddy                               "0.13.0"]
-                 [io.clojure/liberator-transit        "0.3.0"]
-                 [medley                              "0.7.1"]
-                 [clj-time                            "0.11.0"]
-
-                 ;; client
-                 [reagent                     "0.6.0-alpha" :exclusions [cljsjs/react]]
-                 [cljsjs/react-with-addons    "0.13.3-0"]
-                 [re-frame                    "0.7.0"]
-                 [mathias/boot-sassc          "0.1.5" :scope "test"]
-                 [cljs-ajax                   "0.5.4"]
-                 [com.andrewmcveigh/cljs-time "0.4.0"]
-                 [secretary                   "1.2.3"]])
-
-(load-data-readers!)
+ :source-paths   #{"src"}
+ :resource-paths #{}
+ :target-path    "target/build"
+ :dependencies   '[[org.clojure/clojure      "1.7.0"    :scope "provided"]
+                   [boot/core                "2.5.5"    :scope "provided"]
+                   [adzerk/bootlaces         "0.1.13"   :scope "test"] 
+                   [com.datomic/datomic-free "0.9.5344" :scope "test"]
+                   [com.flyingmachine/vern   "0.1.0-SNAPSHOT"]
+                   [io.rkn/conformity        "0.4.0"]])
 
 (require
- '[system.boot                    :as sb]
- '[environ.core                   :as env]
- '[environ.boot                   :refer [environ]]
- '[datomic.api                    :as d]
- '[com.flyingmachine.datomic-junk :as dj]
- '[mathias.boot-sassc             :refer [sass]]
- '[stack.db.tasks                 :as dbt])
+  '[adzerk.bootlaces                 :refer :all]
+  '[flyingmachine.boot-datomic.tasks :refer :all]
+  '[flyingmachine.boot-datomic.core  :as c]
+  '[datomic.api :as d])
 
-;; datomic
-(defn db-uri [] (env/env :db-uri))
-(defn connect [] (d/connect (db-uri)))
+;; This is necessary so that datomic tagged literals will load correctly
+(load-data-readers!)
 
-(deftask development
-  "Set dev-specific env vars"
+(def +version+ "0.1.0-SNAPSHOT")
+(bootlaces! +version+)
+
+(task-options!
+ pom  {:project     'flyingmachine/boot-datomic
+       :version     +version+
+       :description "Opions on basic boot tasks like migrating and adding fixtures"
+       :url         "https://github.com/flyingmachine/boot-datomic"
+       :scm         {:url "https://github.com/flyingmachine/boot-datomic"}
+       :license     {"MIT" "https://opensource.org/licenses/MIT"} })
+
+(deftask dev-env
   []
-  (environ :env {:http-server-port "3000"
-                 :db-uri           "datomic:free://localhost:4334/stack"}))
-
-(deftask migrate-db []
-  (with-pre-wrap fileset
-    (dbt/conform (connect))
-    fileset))
-
-(deftask create-db []
-  (with-pre-wrap fileset
-    (d/create-database (db-uri))
-    fileset))
-
-(deftask delete-db []
-  (with-pre-wrap fileset
-    (d/delete-database (db-uri))
-    fileset))
-
-(deftask recreate-db []
-  (comp (delete-db) (create-db) (migrate-db)))
-
-(deftask bootstrap-db []
-  (comp (create-db)
-        (migrate-db)))
-
-(deftask recreate-db []
-  (comp (delete-db)
-        (bootstrap-db)))
-
-(deftask run
-  "Start hot-loading application"
-  []
-  (comp
-   (watch)
-   (repl :server true)))
+  (set-env! :resource-paths #(conj % "dev-resources"))
+  identity)
 
 (deftask dev
-  "Simple alias to run application in development mode"
   []
-  (set-env! :target-path "target/dev")
-  (comp (development)
-        (run)))
+  (comp
+   (dev-env)
+   (watch)
+   (repl :server true)))
