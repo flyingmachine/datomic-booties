@@ -1,0 +1,9 @@
+[:users
+ [:billy
+  {:db/id #db/id [:db.part/user]
+   :user/username "billy"}]
+
+ :posts
+ [{:db/id #db/id [:db.part/user]
+   :post/content "post content"
+   :content/author [:users :billy :db/id]}]]

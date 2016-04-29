@@ -6,30 +6,29 @@
     [datomic.api  :as d]
     [flyingmachine.boot-datomic.core :as bd]))
 
-(deftask migrate-db
-  [u uri VAL str "Datomic URI"]
-  (with-pre-wrap fileset
-    (bd/conform (d/connect uri))
-    fileset))
+(defmacro defdbtask
+  [name & body]
+  `(deftask ~name
+     ~'[u uri VAL str "Datomic URI"]
+     (with-pre-wrap fileset#
+       ~'(if-not uri
+           (do (util/fail "The -u/--uri option is required!") (*usage*)))
+       ~@body
+       fileset#)))
 
-(deftask create-db
-  [u uri VAL str "Datomic URI"]
-  (with-pre-wrap fileset
-    (d/create-database uri)
-    fileset))
+(defdbtask migrate-db
+  (bd/conform (d/connect uri)))
 
-(deftask delete-db
-  [u uri VAL str "Datomic URI"]
-  (with-pre-wrap fileset
-    (d/delete-database uri)
-    fileset))
+(defdbtask create-db
+  (d/create-database uri))
 
-(deftask bootstrap-db
-  [u uri VAL str "Datomic URI"]
+(defdbtask delete-db
+  (d/delete-database uri))
+
+(defdbtask bootstrap-db
   (comp (create-db  :uri uri)
         (migrate-db :uri uri)))
 
-(deftask recreate-db
-  [u uri VAL str "Datomic URI"]
+(defdbtask recreate-db
   (comp (delete-db    :uri uri)
         (bootstrap-db :uri uri)))
