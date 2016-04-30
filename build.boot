@@ -26,7 +26,7 @@
 (task-options!
  pom  {:project     'flyingmachine/boot-datomic
        :version     +version+
-       :description "Opions on basic boot tasks like migrating and adding fixtures"
+       :description "Opinions on basic boot tasks like migrating and adding fixtures"
        :url         "https://github.com/flyingmachine/boot-datomic"
        :scm         {:url "https://github.com/flyingmachine/boot-datomic"}
        :license     {"MIT" "https://opensource.org/licenses/MIT"} })
@@ -43,9 +43,8 @@
 
 (deftask dev
   []
-  (comp
-   (dev-env)
-   (watch)
-   (repl :server true)))
+  (comp (dev-env)
+        (watch)
+        (repl :server true)))
 
 (def uri "datomic:free://localhost:4334/boot-datomic-dev")

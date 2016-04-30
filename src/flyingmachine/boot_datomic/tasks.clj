@@ -10,11 +10,10 @@
   [name & body]
   `(deftask ~name
      ~'[u uri VAL str "Datomic URI"]
-     (with-pre-wrap fileset#
-       ~'(if-not uri
-           (do (util/fail "The -u/--uri option is required!") (*usage*)))
-       ~@body
-       fileset#)))
+     ~'(if-not uri
+         (do (util/fail "The -u/--uri option is required!") (*usage*)))
+     ~@body
+     identity))
 
 (defdbtask migrate-db
   (bd/conform (d/connect uri)))
