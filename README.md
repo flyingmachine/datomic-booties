@@ -67,3 +67,24 @@ Example:
    :post/content "post content"
    :content/author [:users :billy :db/id]}]]
 ```
+
+## Example
+
+In the `build.boot` of your project:
+
+```clojure
+(set-env!
+ :dependencies [[com.flyingmachine/datomic-booties "0.1.0"]])
+
+;; This is necessary to read datomic literals like #db/id [:db.part/user]
+(load-data-readers!)
+
+(require
+ '[com.flyingmachine.datomic-booties.tasks :refer all])
+```
+
+Then, from the terminal, run things like
+
+```
+$ boot bootstrap-db :uri "datomic:free://localhost:4334/datomic-booties-dev"
+```
