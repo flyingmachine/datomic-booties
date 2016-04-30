@@ -1,10 +1,10 @@
-(ns flyingmachine.boot-datomic.tasks-test
-  (:require [flyingmachine.boot-datomic.tasks :as tasks]
+(ns flyingmachine.datomic-booties.tasks-test
+  (:require [flyingmachine.datomic-booties.tasks :as tasks]
             [boot.core :refer [boot deftask]]
             [datomic.api :as d]
             [clojure.test :refer [deftest is]]))
 
-(def uri "datomic:mem://boot-datomic-test")
+(def uri "datomic:mem://datomic-booties-test")
 
 (deftest migrate
   (boot (tasks/bootstrap-db :uri uri))

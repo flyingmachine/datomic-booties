@@ -1,10 +1,10 @@
-(ns flyingmachine.boot-datomic.tasks
+(ns flyingmachine.datomic-booties.tasks
   {:boot/export-tasks true}
   (:require
     [boot.core    :as core :refer [deftask with-pre-wrap]]
     [boot.util    :as util]
     [datomic.api  :as d]
-    [flyingmachine.boot-datomic.core :as bd]))
+    [flyingmachine.datomic-booties.core :as bd]))
 
 (defmacro defdbtask
   [name & body]

@@ -1,11 +1,7 @@
 target
 .nrepl*
-.lein-env
-bower_components
 .DS_Store
-node_modules
 *.jar
-.vagrant
-infrastructure/ansible/files/env
-certs
-ga-oauth-key*
+
+
+

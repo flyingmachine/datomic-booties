@@ -13,8 +13,8 @@
 (require
   '[adzerk.bootlaces                 :refer :all]
   '[adzerk.boot-test                 :refer :all]
-  '[flyingmachine.boot-datomic.tasks :refer :all]
-  '[flyingmachine.boot-datomic.core  :as c]
+  '[flyingmachine.datomic-booties.tasks :refer :all]
+  '[flyingmachine.datomic-booties.core  :as c]
   '[datomic.api :as d])
 
 ;; This is necessary so that datomic tagged literals will load correctly
@@ -24,11 +24,11 @@
 (bootlaces! +version+)
 
 (task-options!
- pom  {:project     'flyingmachine/boot-datomic
+ pom  {:project     'flyingmachine/datomic-booties
        :version     +version+
-       :description "Opinions on basic boot tasks like migrating and adding fixtures"
-       :url         "https://github.com/flyingmachine/boot-datomic"
-       :scm         {:url "https://github.com/flyingmachine/boot-datomic"}
+       :description "Opinions on basic boot tasks like migrating and adding seed data"
+       :url         "https://github.com/flyingmachine/datomic-booties"
+       :scm         {:url "https://github.com/flyingmachine/datomic-booties"}
        :license     {"MIT" "https://opensource.org/licenses/MIT"} })
 
 (deftask prebuild []
@@ -41,4 +41,4 @@
   (comp (watch)
         (repl :server true)))
 
-(def uri "datomic:free://localhost:4334/boot-datomic-dev")
+(def uri "datomic:free://localhost:4334/datomic-booties-dev")
