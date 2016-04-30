@@ -24,7 +24,7 @@
 (bootlaces! +version+)
 
 (task-options!
- pom  {:project     'com.com.flyingmachine.datomic-booties
+ pom  {:project     'com.flyingmachine/datomic-booties
        :version     +version+
        :description "Opinions on basic boot tasks like migrating and adding seed data"
        :url         "https://github.com/com.flyingmachine.datomic-booties"
