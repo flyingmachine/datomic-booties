@@ -1,6 +1,6 @@
 (set-env!
- :source-paths   #{"src"}
- :resource-paths #{}
+ :source-paths   #{"src" "test"}
+ :resource-paths #{"dev-resources"}
  :target-path    "target/build"
  :dependencies   '[[org.clojure/clojure      "1.7.0"    :scope "provided"]
                    [boot/core                "2.5.5"    :scope "provided"]
@@ -31,20 +31,14 @@
        :scm         {:url "https://github.com/flyingmachine/boot-datomic"}
        :license     {"MIT" "https://opensource.org/licenses/MIT"} })
 
-(deftask test-env []
-  (set-env! :source-paths #{"test"})
-  (set-env! :resource-paths #(conj % "dev-resources"))
-  identity)
-
-(deftask dev-env
-  []
-  (set-env! :resource-paths #(conj % "dev-resources"))
+(deftask prebuild []
+  (set-env! :source-paths #(into #{} (remove #{"test"} %)))
+  (set-env! :resource-paths #(into #{} (remove #{"dev-resources"} %)))
   identity)
 
 (deftask dev
   []
-  (comp (dev-env)
-        (watch)
+  (comp (watch)
         (repl :server true)))
 
 (def uri "datomic:free://localhost:4334/boot-datomic-dev")
