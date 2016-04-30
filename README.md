@@ -74,6 +74,7 @@ In the `build.boot` of your project:
 
 ```clojure
 (set-env!
+ :resource-paths #{"resources"} ; this is where db/schema.edn and db/seed.edn live
  :dependencies [[com.flyingmachine/datomic-booties "0.1.0"]])
 
 ;; This is necessary to read datomic literals like #db/id [:db.part/user]
