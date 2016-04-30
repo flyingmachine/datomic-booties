@@ -1,4 +1,4 @@
-(ns flyingmachine.datomic-booties.core
+(ns com.flyingmachine.datomic-booties.core
   (:require [datomic.api :as d]
             [io.rkn.conformity :as c]
             [growmonster.core :as g]

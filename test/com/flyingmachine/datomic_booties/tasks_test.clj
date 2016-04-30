@@ -1,5 +1,5 @@
-(ns flyingmachine.datomic-booties.tasks-test
-  (:require [flyingmachine.datomic-booties.tasks :as tasks]
+(ns com.flyingmachine.datomic-booties.tasks-test
+  (:require [com.flyingmachine.datomic-booties.tasks :as tasks]
             [boot.core :refer [boot deftask]]
             [datomic.api :as d]
             [clojure.test :refer [deftest is]]))
