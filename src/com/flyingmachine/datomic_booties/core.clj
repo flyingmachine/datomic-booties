@@ -16,7 +16,7 @@
            {:stack/seed {:txes [(g/inflatev @default-seed)]}})))
 
 (defn conform
-  "convenience method to conform both schema and seed from defaualt location"
+  "convenience method to conform both schema and seed from default location"
   ([conn]
    (conform conn (default-norm-map)))
   ([conn & args]
