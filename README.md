@@ -87,5 +87,5 @@ In the `build.boot` of your project:
 Then, from the terminal, run things like
 
 ```
-$ boot bootstrap-db :uri "datomic:free://localhost:4334/datomic-booties-dev"
+$ boot bootstrap-db -u "datomic:free://localhost:4334/datomic-booties-dev"
 ```
