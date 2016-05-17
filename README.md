@@ -81,7 +81,7 @@ In the `build.boot` of your project:
 (load-data-readers!)
 
 (require
- '[com.flyingmachine.datomic-booties.tasks :refer all])
+ '[com.flyingmachine.datomic-booties.tasks :refer :all])
 ```
 
 Then, from the terminal, run things like
