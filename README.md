@@ -3,7 +3,7 @@
 Dependency info:
 
 ```clojure
-[com.flyingmachine.datomic-booties "0.1.0"]
+[com.flyingmachine/datomic-booties "0.1.0"]
 ```
 
 This library makes it easy to stand up a Datomic database with
@@ -81,11 +81,11 @@ In the `build.boot` of your project:
 (load-data-readers!)
 
 (require
- '[com.flyingmachine.datomic-booties.tasks :refer all])
+ '[com.flyingmachine.datomic-booties.tasks :refer :all])
 ```
 
 Then, from the terminal, run things like
 
 ```
-$ boot bootstrap-db :uri "datomic:free://localhost:4334/datomic-booties-dev"
+$ boot bootstrap-db -u "datomic:free://localhost:4334/datomic-booties-dev"
 ```
