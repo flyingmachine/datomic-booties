@@ -31,7 +31,9 @@
        :scm         {:url "https://github.com/com.flyingmachine.datomic-booties"}
        :license     {"MIT" "https://opensource.org/licenses/MIT"} })
 
-(deftask prebuild []
+(deftask prebuild
+  "Remove directories that shouldn't go into the final jar"
+  []
   (set-env! :source-paths #(into #{} (remove #{"test"} %)))
   (set-env! :resource-paths #(into #{} (remove #{"dev-resources"} %)))
   identity)
