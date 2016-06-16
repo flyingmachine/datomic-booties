@@ -5,15 +5,46 @@
             [clojure.java.io :as io]))
 
 (def default-schema (delay (c/read-resource "db/schema.edn")))
-(def default-seed   (delay (let [f "db/seed.edn"]
-                             (and (io/resource f) (c/read-resource f)))))
+(defn default-seed
+  []
+  (let [f "db/seed.edn"]
+    (when-let [seed (and (io/resource f) (c/read-resource f))]
+      {:datomic-booties/seed {:txes [(g/inflatev seed)]}})))
 
 (defn default-norm-map
   "Loads norm map from default sources"
   []
   (merge @default-schema
-         (if @default-seed
-           {:datomic-booties/seed {:txes [(g/inflatev @default-seed)]}})))
+         (default-seed)))
+
+(defn seeds
+  [paths]
+  {:datomic-booties/seed
+   {:txes [(->> paths
+                (mapcat (fn [path]
+                          (if (io/resource path)
+                            (g/inflatev (c/read-resource path))
+                            (throw (ex-info (str "Could not find seed file at path: " path)
+                                            {:path path})))))
+                (into []))]}})
+
+(defn norm-map
+  "Used to specify multiple schema and seed resource paths. Falls back
+  to defaults."
+  [schema-paths seed-paths]
+  (merge
+   (if (empty? schema-paths)
+     @default-schema
+     (apply merge
+            (map (fn [path]
+                   (if (io/resource path)
+                     (c/read-resource path)
+                     (throw (ex-info (str "Could not find schema file at path: " path)
+                                     {:path path}))))
+                 schema-paths)))
+   (if (empty? seed-paths)
+     (default-seed)
+     (seeds seed-paths))))
 
 (defn conform
   "convenience method to conform both schema and seed from default location"
