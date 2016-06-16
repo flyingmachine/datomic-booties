@@ -6,11 +6,11 @@
    [datomic.api  :as d]
    [com.flyingmachine.datomic-booties.core :as bd]))
 
-(defn sym-with-env
+(defn- sym-with-env
   [sym ns]
   `[~sym (or ~sym (c/get-env ~(keyword (name ns) (name sym))))])
 
-(defn syms-with-env
+(defn- syms-with-env
   [ns syms]
   (vec (mapcat #(sym-with-env % ns) syms)))
 
@@ -30,10 +30,11 @@
   `(deftask ~name
      ~desc
      ~'[u uri    VAL str   "Datomic URI"]
-     ~'(if-not uri
-         (do (util/fail "The -u/--uri option is required!") (*usage*)))
-     ~@body
-     identity))
+     (with-env :datomic-booties [~'uri]
+       ~'(if-not uri
+           (do (util/fail "The -u/--uri option is required!") (*usage*)))
+       ~@body
+       identity)))
 
 (defmacro defdatatask
   [name desc & body]
@@ -44,13 +45,12 @@
         d data   DAT [str] "Paths to seed files in resources"]
      ~'(if-not uri
          (do (util/fail "The -u/--uri option is required!") (*usage*)))
-     (with-env :datomic-booties [~'schema ~'data]
+     (with-env :datomic-booties [~'uri ~'schema ~'data]
        ~@body
        identity)))
 
 (defdatatask migrate-db
   "Conform schema and fixtures"
-  (println "norma map:" (bd/norm-map schema data))
   (bd/conform (d/connect uri) (bd/norm-map schema data)))
 
 (defdbtask create-db

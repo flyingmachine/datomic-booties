@@ -3,7 +3,7 @@
 Dependency info:
 
 ```clojure
-[com.flyingmachine/datomic-booties "0.1.0"]
+[com.flyingmachine/datomic-booties "0.1.2"]
 ```
 
 This library makes it easy to stand up a Datomic database with
