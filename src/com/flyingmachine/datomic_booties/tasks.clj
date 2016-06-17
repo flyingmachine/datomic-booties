@@ -32,7 +32,7 @@
      ~'[u uri    VAL str   "Datomic URI"]
      (with-env :datomic-booties [~'uri]
        ~'(if-not uri
-           (do (util/fail "The -u/--uri option is required!") (*usage*)))
+           (do (util/fail "The -u/--uri option is required!\n") (*usage*)))
        ~@body
        identity)))
 
@@ -43,9 +43,9 @@
      ~'[u uri    VAL str   "Datomic URI"
         s schema SCH [str] "Paths to schema defs in resources"
         d data   DAT [str] "Paths to seed files in resources"]
-     ~'(if-not uri
-         (do (util/fail "The -u/--uri option is required!") (*usage*)))
      (with-env :datomic-booties [~'uri ~'schema ~'data]
+       ~'(if-not uri
+           (do (util/fail "The -u/--uri option is required!\n") (*usage*)))
        ~@body
        identity)))
 

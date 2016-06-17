@@ -20,7 +20,7 @@
 ;; This is necessary so that datomic tagged literals will load correctly
 (load-data-readers!)
 
-(def +version+ "0.1.2")
+(def +version+ "0.1.3")
 (bootlaces! +version+)
 
 (task-options!
