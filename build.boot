@@ -7,7 +7,7 @@
                    [adzerk/bootlaces         "0.1.13"   :scope "test"]
                    [adzerk/boot-test         "1.1.1"    :scope "test"]
                    [com.datomic/datomic-free "0.9.5344" :scope "test"]
-                   [growmonster              "0.1.0"]
+                   [growmonster              "0.1.1"]
                    [io.rkn/conformity        "0.4.0"]])
 
 (require
@@ -20,7 +20,7 @@
 ;; This is necessary so that datomic tagged literals will load correctly
 (load-data-readers!)
 
-(def +version+ "0.1.3")
+(def +version+ "0.1.4")
 (bootlaces! +version+)
 
 (task-options!

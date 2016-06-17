@@ -25,6 +25,12 @@
   `(let ~(syms-with-env ns syms)
      ~@body))
 
+(defn sym->var
+  [sym]
+  (if (symbol? sym)
+    (-> sym namespace symbol find-ns (ns-resolve sym))
+    sym))
+
 (defmacro defdbtask
   [name desc & body]
   `(deftask ~name
@@ -40,10 +46,11 @@
   [name desc & body]
   `(deftask ~name
      ~desc
-     ~'[u uri    VAL str   "Datomic URI"
-        s schema SCH [str] "Paths to schema defs in resources"
-        d data   DAT [str] "Paths to seed files in resources"]
-     (with-env :datomic-booties [~'uri ~'schema ~'data]
+     ~'[u uri       VAL str   "Datomic URI"
+        s schema    SCH [str] "Paths to schema defs in resources"
+        d data      DAT [str] "Paths to seed files in resources"
+        t transform TRX sym   "Name of some function to transform each seed data record"]
+     (with-env :datomic-booties [~'uri ~'schema ~'data ~'transform]
        ~'(if-not uri
            (do (util/fail "The -u/--uri option is required!\n") (*usage*)))
        ~@body
@@ -51,7 +58,8 @@
 
 (defdatatask migrate-db
   "Conform schema and fixtures"
-  (bd/conform (d/connect uri) (bd/norm-map schema data)))
+  (let [transform (sym->var transform)]
+    (bd/conform (d/connect uri) (bd/norm-map schema data transform))))
 
 (defdbtask create-db
   "Create datomic db"
@@ -64,9 +72,15 @@
 (defdatatask bootstrap-db
   "Create and migrate db"
   (comp (create-db  :uri uri)
-        (migrate-db :uri uri :schema schema :data data)))
+        (migrate-db :uri uri
+                    :schema schema
+                    :data data
+                    :transform transform)))
 
 (defdatatask recreate-db
   "Delete then bootstrap db"
   (comp (delete-db    :uri uri)
-        (bootstrap-db :uri uri :schema schema :data data)))
+        (bootstrap-db :uri uri
+                      :schema schema
+                      :data data
+                      :transform transform)))

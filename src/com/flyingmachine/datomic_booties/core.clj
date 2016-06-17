@@ -18,12 +18,12 @@
          (default-seed)))
 
 (defn seeds
-  [paths]
+  [paths seed-transform]
   {:datomic-booties/seed
    {:txes [(->> paths
                 (mapcat (fn [path]
                           (if (io/resource path)
-                            (g/inflatev (c/read-resource path))
+                            (g/inflatev (c/read-resource path) (or seed-transform identity))
                             (throw (ex-info (str "Could not find seed file at path: " path)
                                             {:path path})))))
                 (into []))]}})
@@ -31,7 +31,7 @@
 (defn norm-map
   "Used to specify multiple schema and seed resource paths. Falls back
   to defaults."
-  [schema-paths seed-paths]
+  [schema-paths seed-paths seed-transform]
   (merge
    (if (empty? schema-paths)
      @default-schema
@@ -44,7 +44,7 @@
                  schema-paths)))
    (if (empty? seed-paths)
      (default-seed)
-     (seeds seed-paths))))
+     (seeds seed-paths seed-transform))))
 
 (defn conform
   "convenience method to conform both schema and seed from default location"

@@ -10,7 +10,6 @@
 (defn with-db [f]
   (boot (tasks/create-db :uri uri))
   (f)
-  (println "killed!")
   (boot (tasks/delete-db :uri uri)))
 
 (use-fixtures :each with-db)
@@ -29,10 +28,16 @@
          :content/author {:db/id 17592186045422}}]]))
   (boot (tasks/delete-db :uri uri)))
 
+(defn seed-transform
+  [x]
+  (pr x (type x))
+  (assoc x :db/id (d/tempid :db.part/user)))
+
 (deftest custom-schema-and-seed
   (boot (tasks/bootstrap-db :uri uri
                             :schema ["db/custom-schema.edn" "db/custom-schema-2.edn"]
-                            :data ["db/custom-seed.edn"]))
+                            :data ["db/custom-seed.edn"]
+                            :transform 'com.flyingmachine.datomic-booties.tasks-test/seed-transform))
   (let [attrs (into #{} (core/attributes (d/connect uri)))]
     (is (every? attrs [:custom/attr :custom/mixy-matchy]))
     (is (not-any? attrs [:user/username :post/content]))
