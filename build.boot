@@ -20,7 +20,7 @@
 ;; This is necessary so that datomic tagged literals will load correctly
 (load-data-readers!)
 
-(def +version+ "0.1.4")
+(def +version+ "0.1.5")
 (bootlaces! +version+)
 
 (task-options!
@@ -44,3 +44,11 @@
         (repl :server true)))
 
 (def uri "datomic:free://localhost:4334/datomic-booties-dev")
+
+(deftask make
+  "local install"
+  []
+  (comp (prebuild)
+        (pom)
+        (jar)
+        (install)))
