@@ -1,14 +1,14 @@
 (set-env!
- :source-paths   #{"src" "test"}
- :resource-paths #{"dev-resources"}
- :target-path    "target/build"
- :dependencies   '[[org.clojure/clojure      "1.7.0"    :scope "provided"]
-                   [boot/core                "2.5.5"    :scope "provided"]
-                   [adzerk/bootlaces         "0.1.13"   :scope "test"]
-                   [adzerk/boot-test         "1.1.1"    :scope "test"]
-                   [com.datomic/datomic-free "0.9.5344" :scope "test"]
-                   [growmonster              "0.1.1"]
-                   [io.rkn/conformity        "0.4.0"]])
+  :source-paths   #{"src" "test"}
+  :resource-paths #{"dev-resources"}
+  :target-path    "target/build"
+  :dependencies   '[[org.clojure/clojure      "1.7.0"    :scope "provided"]
+                    [boot/core                "2.5.5"    :scope "provided"]
+                    [adzerk/bootlaces         "0.1.13"   :scope "test"]
+                    [adzerk/boot-test         "1.1.1"    :scope "test"]
+                    [com.datomic/datomic-free "0.9.5344" :scope "test"]
+                    [growmonster              "0.1.4"]
+                    [io.rkn/conformity        "0.4.0"]])
 
 (require
   '[adzerk.bootlaces                 :refer :all]
@@ -20,7 +20,7 @@
 ;; This is necessary so that datomic tagged literals will load correctly
 (load-data-readers!)
 
-(def +version+ "0.1.5")
+(def +version+ "0.1.6")
 (bootlaces! +version+)
 
 (task-options!
