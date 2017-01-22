@@ -37,8 +37,7 @@
 
 (defdatatask migrate-db
   "Conform schema and fixtures"
-  (let [transform (sym->var transform)]
-    (bd/conform (d/connect uri) (bd/norm-map schema data transform))))
+  (bd/conform (d/connect uri) schema data (sym->var transform)))
 
 (defdbtask create-db
   "Create datomic db"

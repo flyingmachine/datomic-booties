@@ -4,19 +4,6 @@
             [growmonster.core :as g]
             [clojure.java.io :as io]))
 
-(def default-schema (delay (c/read-resource "db/schema.edn")))
-(defn default-seed
-  []
-  (let [f "db/seed.edn"]
-    (when-let [seed (and (io/resource f) (c/read-resource f))]
-      {:datomic-booties/seed {:txes [(g/inflatev seed)]}})))
-
-(defn default-norm-map
-  "Loads norm map from default sources"
-  []
-  (merge @default-schema
-         (default-seed)))
-
 (defn seeds
   [paths seed-transform]
   {:datomic-booties/seed
@@ -28,30 +15,25 @@
                                             {:path path})))))
                 (into []))]}})
 
-(defn norm-map
+(defn schemas
   "Used to specify multiple schema and seed resource paths. Falls back
   to defaults."
-  [schema-paths seed-paths seed-transform]
-  (merge
-   (if (empty? schema-paths)
-     @default-schema
-     (apply merge
-            (map (fn [path]
-                   (if (io/resource path)
-                     (c/read-resource path)
-                     (throw (ex-info (str "Could not find schema file at path: " path)
-                                     {:path path}))))
-                 schema-paths)))
-   (if (empty? seed-paths)
-     (default-seed)
-     (seeds seed-paths seed-transform))))
+  [schema-paths]
+  (apply merge
+         (map (fn [path]
+                (if (io/resource path)
+                  (c/read-resource path)
+                  (throw (ex-info (str "Could not find schema file at path: " path)
+                                  {:path path}))))
+              schema-paths)))
 
 (defn conform
-  "convenience method to conform both schema and seed from default location"
-  ([conn]
-   (conform conn (default-norm-map)))
-  ([conn & args]
-   (apply c/ensure-conforms conn args)))
+  "convenience method to conform both schema and seed"
+  ([conn schema-paths seed-paths seed-transform]
+   (when (not-empty schema-paths)
+     (c/ensure-conforms conn (schemas schema-paths)))
+   (when (not-empty seed-paths)
+     (c/ensure-conforms conn (seeds seed-paths seed-transform)))))
 
 (defn attributes
   "list all installed attributes - useful for debugging"
