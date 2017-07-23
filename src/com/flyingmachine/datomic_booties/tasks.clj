@@ -9,7 +9,9 @@
 (defn sym->var
   [sym]
   (if (symbol? sym)
-    (-> sym namespace symbol find-ns (ns-resolve sym))
+    (let [ns-sym (-> sym namespace symbol)]
+      (require ns-sym)
+      (-> ns-sym find-ns (ns-resolve sym)))
     sym))
 
 (defmacro defdbtask
